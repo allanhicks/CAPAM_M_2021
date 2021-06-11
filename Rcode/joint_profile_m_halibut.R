@@ -103,7 +103,7 @@ z <- matrix(out$diffNegLogLike,
 
 # mtrx_melt <- melt(z, id.vars = c("M_f", "M_m"), measure.vars = 'Delta_NLL')
 # names(mtrx_melt) = c("M_f", "M_m", "Delta_NLL")
-minMf <- 0.181
+minMf <- 0.16
 mtrx_NoMelt <- out[out$M_f>=minMf,c("M_f","M_m","diffNegLogLike")]
 names(mtrx_NoMelt) = c("M_f", "M_m", "Delta_NLL")
 
@@ -128,7 +128,7 @@ ggplot(mtrx_NoMelt, aes(x = M_f, y = M_m)) +
       legend.text = element_text(size = 15), 
       legend.title = element_text(size = 15)) +
     guides(fill = guide_legend(title = "Change in NLL"))
-# ggsave(file.path(getwd(), "joint_m_profile_halibutLongCW_noOffset.png"), width = 12, height = 12)
+# ggsave(file.path(getwd(), "joint_m_profile_halibutLongCW_noOffset.png"), width = 14, height = 12)
 # dev.off()
 Mms <- diffMs <- rep(NA,nrow(z))
 for(ff in 1:nrow(z)) {
@@ -146,7 +146,7 @@ plot(as.numeric(x),diffMs)
 model_name <- "lcw_offset 19_base2020"; offset<-T
 runFolder <- file.path(mydir,model_name)
 #run this function if output.Rdat is not created
-likeCW <- readOutput.fn(runFolder,offset=offset)
+# likeCW <- readOutput.fn(runFolder,offset=offset)
 setwd(runFolder)
 load("output.Rdat")
 
@@ -168,8 +168,8 @@ names(mtrx_NoMelt) = c("M_f", "M_offset", "Delta_NLL")
 # contour(as.numeric(rownames(z)),as.numeric(colnames(z)),z,levels=c(0.5,1,2,3,5,10),xlab="Female M",ylab="Male M")
 ggplot(mtrx_NoMelt, aes(x = M_f, y = M_offset)) +
     geom_contour_filled(aes(z = Delta_NLL), breaks = c(0,0.5, 1, 2, 3, 4, 6, 10, seq(20,200, 20))) +
-    geom_text_contour(aes(z = Delta_NLL), 
-       breaks = c(1,2, 3, 6, seq(10, 100, 10)), size = 5, color = 'white') +
+    #geom_text_contour(aes(z = Delta_NLL), 
+    #   breaks = c(1,2, 3, 6, seq(10, 100, 10)), size = 5, color = 'white') +
     xlab("Natural Mortality (F)") +
     ylab("Natural Mortality (M)") +
     theme(
