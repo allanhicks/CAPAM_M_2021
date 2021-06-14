@@ -73,8 +73,7 @@ readOutput.fn <- function(folder,offset,Mvals=NULL) {
 # Plot Profile Figure using ggplot
 ###################################################################
 
-mydir = "C:/GitHub/CAPAM_M_2021/Halibut"
-# mydir = "F:/IPHC/Assessment/2020/Mprofile"
+mydir = "F:/IPHC/Assessment/2020/Mprofile"
 # mydir = "C:/IPHC/OneDrive - International Pacific Halibut Commission/Meetings/Other/CAPAM/2021_M/halibut"
 model_name = "lcw 19_base2020"; offset<-F
 runFolder <- file.path(mydir,model_name)
@@ -86,8 +85,8 @@ setwd(runFolder)
 load("output.Rdat")
 
 tmp <- out$negLogLike
-#tmp <- out$surveyLogLike
-#tmp <- out$ageLogLike
+tmp <- out$surveyLogLike
+tmp <- out$ageLogLike
 out <- as.data.frame(output)
 out$diffNegLogLike <- tmp - min(tmp)
 out$diff_M <- out$M_f - out$M_m
@@ -103,7 +102,7 @@ z <- matrix(out$diffNegLogLike,
 
 # mtrx_melt <- melt(z, id.vars = c("M_f", "M_m"), measure.vars = 'Delta_NLL')
 # names(mtrx_melt) = c("M_f", "M_m", "Delta_NLL")
-minMf <- 0.16
+minMf <- 0.181
 mtrx_NoMelt <- out[out$M_f>=minMf,c("M_f","M_m","diffNegLogLike")]
 names(mtrx_NoMelt) = c("M_f", "M_m", "Delta_NLL")
 
@@ -116,10 +115,10 @@ names(mtrx_NoMelt) = c("M_f", "M_m", "Delta_NLL")
 # pngfun(wd = getwd(), file = "joint_m_profile_ggplot.png", w = 12, h = 12, pt = 12)
 ggplot(mtrx_NoMelt, aes(x = M_f, y = M_m)) +
     geom_contour_filled(aes(z = Delta_NLL), breaks = c(0, 2, 3, 4, 6, 10, seq(20,200, 20))) +
-    #geom_text_contour(aes(z = Delta_NLL), 
-    #   breaks = c(2, 4, 6, seq(10, 100, 10)), size = 7, color = 'white') +
-    xlab("Female Natural Mortality") +
-    ylab("Male Natural Mortality") +
+    geom_text_contour(aes(z = Delta_NLL), 
+       breaks = c(2, 4, 6, seq(10, 100, 10)), size = 7, color = 'white') +
+    xlab("Natural Mortality (F)") +
+    ylab("Natural Mortality (M)") +
     theme(
       axis.text.y = element_text(size = 15, color = 1),
       axis.text.x = element_text(size = 15, color = 1), 
@@ -128,7 +127,9 @@ ggplot(mtrx_NoMelt, aes(x = M_f, y = M_m)) +
       legend.text = element_text(size = 15), 
       legend.title = element_text(size = 15)) +
     guides(fill = guide_legend(title = "Change in NLL"))
-# ggsave(file.path(getwd(), "joint_m_profile_halibutLongCW_noOffset.png"), width = 14, height = 12)
+# ggsave("C:/GitHub/CAPAM_M_2021/Figures/joint_m_profile_direct_halibut.png", width = 14, height = 12)
+# ggsave("C:/GitHub/CAPAM_M_2021/Figures/joint_m_profileSurvey_direct_halibut.png", width = 14, height = 12)
+# ggsave("C:/GitHub/CAPAM_M_2021/Figures/joint_m_profileAge_direct_halibut.png", width = 14, height = 12)
 # dev.off()
 Mms <- diffMs <- rep(NA,nrow(z))
 for(ff in 1:nrow(z)) {
@@ -151,6 +152,9 @@ setwd(runFolder)
 load("output.Rdat")
 
 # out.mle <- output[nrow(output),]
+tmp <- out$negLogLike
+# tmp <- out$surveyLogLike
+# tmp <- out$ageLogLike
 out <- as.data.frame(output)
 out$diffNegLogLike <- out$negLogLike - min(out$negLogLike)#out.mle["negLogLike"]
 out$diff_M <- out$M_f - out$M_m
@@ -168,8 +172,8 @@ names(mtrx_NoMelt) = c("M_f", "M_offset", "Delta_NLL")
 # contour(as.numeric(rownames(z)),as.numeric(colnames(z)),z,levels=c(0.5,1,2,3,5,10),xlab="Female M",ylab="Male M")
 ggplot(mtrx_NoMelt, aes(x = M_f, y = M_offset)) +
     geom_contour_filled(aes(z = Delta_NLL), breaks = c(0,0.5, 1, 2, 3, 4, 6, 10, seq(20,200, 20))) +
-    #geom_text_contour(aes(z = Delta_NLL), 
-    #   breaks = c(1,2, 3, 6, seq(10, 100, 10)), size = 5, color = 'white') +
+    geom_text_contour(aes(z = Delta_NLL), 
+       breaks = c(1,2, 3, 6, seq(10, 100, 10)), size = 5, color = 'white') +
     xlab("Natural Mortality (F)") +
     ylab("Natural Mortality (M)") +
     theme(
@@ -180,6 +184,7 @@ ggplot(mtrx_NoMelt, aes(x = M_f, y = M_offset)) +
       legend.text = element_text(size = 15), 
       legend.title = element_text(size = 15)) +
     guides(fill = guide_legend(title = "Change in NLL"))
+ # ggsave("C:/GitHub/CAPAM_M_2021/Figures/joint_m_profile_offset_halibut.png", width = 14, height = 12)
 
 #find optimum M_m given M_f
 Mms <- diffMs <- rep(NA,nrow(z))
